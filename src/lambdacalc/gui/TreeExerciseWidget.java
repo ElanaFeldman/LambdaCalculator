@@ -128,20 +128,20 @@ public class TreeExerciseWidget extends JPanel {
             // above of taking away the meaning brackets. Additional methods
             // are provided for advancing the simplification state, which appends
             // simplification steps into this state.
-            if (!lambdacalc.Main.GOD_MODE)
-                return;
-            
-            while (true) {
-                try {
-                    Expr.LambdaConversionResult r = meaning.performLambdaConversion();
-                    if (r == null) break;
-                    meaning = r.result;
-                    exprs.add(meaning);
-                } catch (TypeEvaluationException tee) {
-                    evaluationError = tee.getMessage();
-                    return;
-                }
-            }
+//            if (!lambdacalc.Main.GOD_MODE)
+//                return;
+//            
+//            while (true) {
+//                try {
+//                    Expr.LambdaConversionResult r = meaning.performLambdaConversion();
+//                    if (r == null) break;
+//                    meaning = r.result;
+//                    exprs.add(meaning);
+//                } catch (TypeEvaluationException tee) {
+//                    evaluationError = tee.getMessage();
+//                    return;
+//                }
+//            }
         }
         
         public MeaningState(Vector steps) {
@@ -150,7 +150,7 @@ public class TreeExerciseWidget extends JPanel {
         }
         
         public Expr getCurrentExpression() {
-            return (Expr) this.exprs.get(this.curexpr);
+            return (Expr)this.exprs.get(this.curexpr);
         }
     }
     
@@ -455,13 +455,14 @@ public class TreeExerciseWidget extends JPanel {
         // on these buttons
         
         if (selectedNode != null && 
-                ((selectedNode instanceof BareIndex 
-                || selectedNode instanceof DummyTerminal))) {
+               (selectedNode instanceof BareIndex ||
+                selectedNode instanceof DummyTerminal)) {
             btnSimplify.setEnabled(false);
             btnUnsimplify.setEnabled(false);
             btnNextStep.setEnabled(false);
             btnPrevStep.setEnabled(false);
             return;
+        } else {
         }
         
     // Check what buttons should be enabled now
@@ -474,13 +475,11 @@ public class TreeExerciseWidget extends JPanel {
         String simplifyText = "Simplify Node";
         //String unSimplifyText = "Undo Simplify";
         if (lambdacalc.Main.GOD_MODE) {
-            if (selectedNode != null && selectedNode instanceof Terminal) {
+            if (selectedNode != null && selectedNode instanceof Terminal)
                 simplifyText = "Next Node";
-            }
-            else if (selectedNode != null && !lfToMeaningState.containsKey(selectedNode)) {
+            else if (selectedNode != null && !lfToMeaningState.containsKey(selectedNode))
                 simplifyText = "Evaluate Node";
                 //unSimplifyText = "Undo Eval";
-            }
         }
         btnSimplify.setText(simplifyText);
         //btnUnsimplify.setText(unSimplifyText);

@@ -6,6 +6,8 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import lambdacalc.gui.TrainingWindow;
 import lambdacalc.logic.Expr;
+import lambdacalc.logic.Type;
+import lambdacalc.logic.TypeEvaluationException;
 
 public class Nonterminal extends LFNode {
     
@@ -14,6 +16,9 @@ public class Nonterminal extends LFNode {
     private CompositionRule compositor;
     private int compositorHits = 0;
     private Vector userProvidedMeaningSimplification; //of Expr objects
+    
+    protected Type type = null;
+    protected Expr meaning = null;
     
     
     public List getChildren() {
@@ -83,6 +88,8 @@ public class Nonterminal extends LFNode {
     public Expr getMeaning(AssignmentFunction g)
     throws MeaningEvaluationException {
         
+        if (this.meaning != null) return this.meaning;
+        
         if (lambdacalc.Main.GOD_MODE) {
             // Guess a composition rule, and if we don't find any, tell the user none seem to apply.
             if (compositor == null || !compositor.isApplicableTo(this))
@@ -107,7 +114,28 @@ public class Nonterminal extends LFNode {
                         " to combine the children of this node.");
         }
         
-        return compositor.applyTo(this, g, true);
+        Expr m = compositor.applyTo(this, g, true);
+        setMeaning(m);
+        try {
+            setType(m.getType());
+        } catch (TypeEvaluationException ex) {
+            //ex.printStackTrace();
+        }
+        return m;
+    }
+    
+    public void setType (Type type) {
+        this.type = type;
+    }
+    
+    public void setMeaning(Expr meaning) {
+        Expr oldMeaning = this.meaning;
+        this.meaning = meaning;
+        changes.firePropertyChange("meaning", oldMeaning, this.meaning);
+    }
+    
+    public boolean hasMeaning() {
+        return meaning != null;
     }
     
     /**
@@ -120,6 +148,7 @@ public class Nonterminal extends LFNode {
     public SortedMap getProperties() {
         SortedMap m = super.getProperties();
         m.put("Rule", this.getCompositionRule());
+        m.put("Meaning", this.meaning);
         return m;
     }
     

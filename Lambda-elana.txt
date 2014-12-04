@@ -3,7 +3,7 @@ Lambda
 constants of type e : it
 constants of type <e,e> : C 
 constants of type <e,t> : S
-constants of type <<e,t>,e> : G
+#constants of type <<e,t>,e> : G
 variables of type e : a-o r-z
 variables of type <e,t> : P-Q
 variables of type t : p q
@@ -44,7 +44,7 @@ define make1: Lx[draw(x)]
 #define make2: LPLx[P(x)]
 
 #function words
-define a: LP[G(P)]
+define a: LP[Gx(P(x))]
 define the: LP[Iy(P(y))]
 #it is the name of the python variable that contains the identity of
 #the last updated element

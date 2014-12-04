@@ -513,7 +513,7 @@ public class ExpressionParser {
             case ForAll.SYMBOL: //fall through
             case Exists.SYMBOL: //fall through
             case Lambda.SYMBOL: //fall through
-            case Iota.SYMBOL://fall through  
+            case Iota.SYMBOL://fall through
             case Gamma.SYMBOL: //Get the identifier that follows the binder.
                 ParseResultSet vars = parseIdentifier(expression, start+1, context, "a variable");
                 if (vars.Exception != null) return vars; // return any fatal errors directly

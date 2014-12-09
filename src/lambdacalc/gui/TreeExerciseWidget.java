@@ -1,3 +1,24 @@
+/*
+ * Copyright (C) 2007-2014 Dylan Bumford, Lucas Champollion, Maribel Romero
+ * and Joshua Tauberer
+ * 
+ * This file is part of The Lambda Calculator.
+ * 
+ * The Lambda Calculator is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * The Lambda Calculator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with The Lambda Calculator.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package lambdacalc.gui;
 
 import java.awt.*;
@@ -70,6 +91,8 @@ public class TreeExerciseWidget extends JPanel {
     JButton btnFontIncrease = new JButton("Larger");
     JButton btnFontDecrease = new JButton("Smaller");
     JButton btnLatex = new JButton("LaTeX");
+    NextStepActionListener next = new NextStepActionListener();
+    LatexActionListener latex = new LatexActionListener();
     
     // Selection listeners
     Vector listeners = new Vector();
@@ -197,7 +220,8 @@ public class TreeExerciseWidget extends JPanel {
         buttons.add(btnUnsimplify);
         btnUnsimplify.setToolTipText("Undo one simplification step on the selected node.");
         
-        btnNextStep.addActionListener(new NextStepActionListener());
+        
+        btnNextStep.addActionListener(next);
         buttons.add(btnNextStep);
         btnNextStep.setToolTipText("Fully evaluate the current node and move up the tree.");
 
@@ -213,7 +237,7 @@ public class TreeExerciseWidget extends JPanel {
         buttons.add(btnFontDecrease);
         btnFontDecrease.setToolTipText("Decrease font size.");
 
-        btnLatex.addActionListener(new LatexActionListener());
+        btnLatex.addActionListener(latex);
         buttons.add(btnLatex);
         btnLatex.setToolTipText("Export current view to Latex");
         
@@ -1131,8 +1155,9 @@ public class TreeExerciseWidget extends JPanel {
     class LatexActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String treeRep = exportCurrentViewToLatex();
-            TrainingWindow s = TrainingWindow.getSingleton();
-            s.updateNodePropertyPanel(treeRep);
+            System.out.println(treeRep);
+            //TrainingWindow s = TrainingWindow.getSingleton();
+            //s.updateNodePropertyPanel(treeRep);
         }
     }
     
@@ -1152,13 +1177,16 @@ public class TreeExerciseWidget extends JPanel {
         fs.display();
     }
                                       
-    public static void main(String[] args) {
-        
+    public static void main(final String[] args) {
+    	if(args.length<1){
+    		System.out.println("Please provide a filename.");
+    		System.exit(-1);
+    	}
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 TreeExerciseWidget w = new TreeExerciseWidget();
                 try {
-                    ExerciseFile file = ExerciseFileParser.parse(new java.io.FileReader("examples/example2.txt"));
+                    ExerciseFile file = ExerciseFileParser.parse(new java.io.FileReader(args[0]));
                     w.initialize((TreeExercise)file.getGroup(0).getItem(0));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1167,6 +1195,11 @@ public class TreeExerciseWidget extends JPanel {
                 frame.setSize(640, 480);
                 frame.getContentPane().add(w);
                 frame.setVisible(true);
+                for(int i=0; i< 150; i++){
+                	w.next.actionPerformed(null);
+                }
+                w.latex.actionPerformed(null);
+                System.exit(0);
             }
         });
     }
